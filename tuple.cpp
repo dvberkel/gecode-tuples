@@ -5,17 +5,19 @@
 
 using namespace Gecode;
 
-std::vector<int> values = { 3, 1, 4, 2, 5, 9 };
-
 class Tuple : public Space {
 protected:
   IntVar x;
   IntVar y;
 
 public:
-  Tuple(void) {
-    x = IntVar(*this, 0, 5);
-    y = IntVar(*this, 0, 10);
+  Tuple(std::vector<int> values){
+    {
+      auto minimum = std::min_element(std::begin(values), std::end(values));
+      auto maximum = std::max_element(std::begin(values), std::end(values));
+      x = IntVar(*this, 0, values.size() - 1);
+      y = IntVar(*this, *minimum, *maximum);
+    }
 
     {
       std::vector<int>::iterator v = values.begin();
@@ -27,7 +29,6 @@ public:
     }
 
     branch(*this, x, INT_VAL_MIN());
-    branch(*this, y, INT_VAL_MIN());
   }
 
   Tuple(bool share, Tuple& t) : Space(share, t) {
@@ -45,7 +46,7 @@ public:
 };
 
 int main(int argc, char* argv[]) {
-  Tuple* t = new Tuple;
+  Tuple* t = new Tuple({ 3, 1, 4, 2, 6, 5 });
   DFS<Tuple> engine(t);
   delete t;
 
