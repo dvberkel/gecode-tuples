@@ -5,20 +5,26 @@
 
 using namespace Gecode;
 
+std::vector<int> values = { 3, 1, 4, 2, 5, 9 };
+
 class Tuple : public Space {
 protected:
   IntVar x;
   IntVar y;
-  BoolVar b;
 
 public:
   Tuple(void) {
-    x = IntVar(*this, 0, 10);
+    x = IntVar(*this, 0, 5);
     y = IntVar(*this, 0, 10);
-    b = BoolVar(*this, 0, 1);
 
-    rel(*this, x, IRT_EQ, y);
-    rel(*this, x, IRT_EQ, 5, b);
+    {
+      std::vector<int>::iterator v = values.begin();
+      for (IntVarValues i(x); i(); ++i, ++v) {
+	BoolVar b = BoolVar(*this, 0, 1);
+	rel(*this, x, IRT_EQ, i.val(), b);
+	rel(*this, y, IRT_EQ, *v, b);
+      }
+    }
 
     branch(*this, x, INT_VAL_MIN());
     branch(*this, y, INT_VAL_MIN());
@@ -27,7 +33,6 @@ public:
   Tuple(bool share, Tuple& t) : Space(share, t) {
     x.update(*this, share, t.x);
     y.update(*this, share, t.y);
-    b.update(*this, share, t.b);
   }
 
   virtual Space* copy(bool share) {
@@ -35,7 +40,7 @@ public:
   }
 
   void print(void) const {
-    std::cout << "(" << x << "," << y << "," << b << ")" << std::endl;
+    std::cout << "(" << x << "," << y << ")" << std::endl;
   }
 };
 
