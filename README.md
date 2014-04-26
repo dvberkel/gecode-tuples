@@ -1,4 +1,7 @@
-gecode-tuples
-=============
+Gecode Tuple Question
+=====================
 
-A small Gecode project to demonstrate one way of chosing two variables among tuples.
+This project contains a minimal example that occompanies a question
+about [Gecode][gecode].
+
+[gecode]: http://www.gecode.org/
