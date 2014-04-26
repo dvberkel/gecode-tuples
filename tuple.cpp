@@ -9,13 +9,16 @@ class Tuple : public Space {
 protected:
   IntVar x;
   IntVar y;
+  BoolVar b;
 
 public:
   Tuple(void) {
-    x = IntVar(*this, 0, 100);
-    y = IntVar(*this, 0, 100);
+    x = IntVar(*this, 0, 10);
+    y = IntVar(*this, 0, 10);
+    b = BoolVar(*this, 0, 1);
 
     rel(*this, x, IRT_EQ, y);
+    rel(*this, x, IRT_EQ, 5, b);
 
     branch(*this, x, INT_VAL_MIN());
     branch(*this, y, INT_VAL_MIN());
@@ -24,6 +27,7 @@ public:
   Tuple(bool share, Tuple& t) : Space(share, t) {
     x.update(*this, share, t.x);
     y.update(*this, share, t.y);
+    b.update(*this, share, t.b);
   }
 
   virtual Space* copy(bool share) {
@@ -31,7 +35,7 @@ public:
   }
 
   void print(void) const {
-    std::cout << "(" << x << "," << y << ")" << std::endl;
+    std::cout << "(" << x << "," << y << "," << b << ")" << std::endl;
   }
 };
 
